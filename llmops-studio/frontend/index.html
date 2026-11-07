@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLMOps Studio | LLM Evaluation, Experimentation & Observability</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h2>LLMOps Studio</h2>
+          <span class="brand-tag">v1.0.0 • Production</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="#overview" class="nav-item active" data-section="overview">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Overview</span>
+        </a>
+        <a href="#models" class="nav-item" data-section="models">
+          <span class="nav-icon">🤖</span>
+          <span class="nav-label">Model Registry</span>
+        </a>
+        <a href="#prompts" class="nav-item" data-section="prompts">
+          <span class="nav-icon">📝</span>
+          <span class="nav-label">Prompt Studio</span>
+        </a>
+        <a href="#datasets" class="nav-item" data-section="datasets">
+          <span class="nav-icon">📁</span>
+          <span class="nav-label">Datasets</span>
+        </a>
+        <a href="#experiments" class="nav-item" data-section="experiments">
+          <span class="nav-icon">🧪</span>
+          <span class="nav-label">Experiment Lab</span>
+        </a>
+        <a href="#evaluation" class="nav-item" data-section="evaluation">
+          <span class="nav-icon">🎯</span>
+          <span class="nav-label">Evaluation Center</span>
+        </a>
+        <a href="#comparison" class="nav-item" data-section="comparison">
+          <span class="nav-icon">⚖️</span>
+          <span class="nav-label">Model Comparison</span>
+        </a>
+        <a href="#observability" class="nav-item" data-section="observability">
+          <span class="nav-icon">🔍</span>
+          <span class="nav-label">Observability & Traces</span>
+        </a>
+        <a href="#analytics" class="nav-item" data-section="analytics">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">Analytics & Quality</span>
+        </a>
+        <a href="#history" class="nav-item" data-section="history">
+          <span class="nav-icon">📜</span>
+          <span class="nav-label">Experiment History</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status-indicator" id="system-status-badge">
+          <span class="status-dot green"></span>
+          <span class="status-text" id="system-status-text">System Online</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <header class="topbar">
+        <div class="topbar-title">
+          <h1 id="page-title">Platform Overview</h1>
+          <p id="page-subtitle">Telemetry, benchmark metrics, and execution diagnostics</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-secondary" id="btn-seed-data">
+            <span>⚡ Seed Benchmarks</span>
+          </button>
+          <button class="btn btn-primary" id="btn-quick-experiment">
+            <span>+ New Experiment</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- View Containers -->
+      <div class="content-wrapper">
+
+        <!-- 1. Overview Section -->
+        <section id="section-overview" class="view-section active">
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon blue">🧪</div>
+              <div class="kpi-data">
+                <span class="kpi-label">Total Experiments</span>
+                <span class="kpi-value" id="kpi-experiments">-</span>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon purple">⚡</div>
+              <div class="kpi-data">
+                <span class="kpi-label">Model Executions</span>
+                <span class="kpi-value" id="kpi-executions">-</span>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon green">🎯</div>
+              <div class="kpi-data">
+                <span class="kpi-label">Avg Quality Score</span>
+                <span class="kpi-value" id="kpi-avg-score">-</span>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon orange">⏱️</div>
+              <div class="kpi-data">
+                <span class="kpi-label">Avg Latency</span>
+                <span class="kpi-value" id="kpi-avg-latency">-</span>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon cyan">📊</div>
+              <div class="kpi-data">
+                <span class="kpi-label">Tokens Consumed</span>
+                <span class="kpi-value" id="kpi-tokens">-</span>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon emerald">✅</div>
+              <div class="kpi-data">
+                <span class="kpi-label">Success Rate</span>
+                <span class="kpi-value" id="kpi-success-rate">-</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mt-4">
+            <div class="card-header">
+              <h3>Recent Evaluation Activity</h3>
+              <button class="btn btn-sm btn-ghost" id="refresh-overview">Refresh</button>
+            </div>
+            <div class="card-body">
+              <div class="table-container">
+                <table class="data-table" id="table-overview-recent">
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      <th>Request ID</th>
+                      <th>Model</th>
+                      <th>Status</th>
+                      <th>Latency</th>
+                      <th>Tokens</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td colspan="7" class="text-center">Loading execution activity...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. Model Registry Section -->
+        <section id="section-models" class="view-section">
+          <div class="section-header-row">
+            <div>
+              <h2>Model Registry</h2>
+              <p>Configure local and remote model endpoints, hyperparameter defaults, and pricing.</p>
+            </div>
+            <button class="btn btn-primary" id="btn-open-register-model">+ Register Model</button>
+          </div>
+
+          <div class="card mt-3">
+            <div class="card-body">
+              <div class="table-container">
+                <table class="data-table" id="table-models">
+                  <thead>
+                    <tr>
+                      <th>Model Name</th>
+                      <th>Provider</th>
+                      <th>Identifier</th>
+                      <th>Max Tokens</th>
+                      <th>Temp / Top-P</th>
+                      <th>Cost / 1k Tokens</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td colspan="8" class="text-center">Loading registered models...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Prompt Studio Section -->
+        <section id="section-prompts" class="view-section">
+          <div class="section-header-row">
+            <div>
+              <h2>Prompt Studio</h2>
+              <p>Version, test, and manage prompt templates with live variable interpolation.</p>
+            </div>
+            <button class="btn btn-primary" id="btn-open-create-prompt">+ New Prompt</button>
+          </div>
+
+          <div class="studio-layout mt-3">
+            <!-- Left: Prompts List -->
+            <div class="card studio-sidebar">
+              <div class="card-header">
+                <h3>Prompt Templates</h3>
+              </div>
+              <div class="prompt-list" id="prompts-list-container">
+                <div class="empty-state">Loading prompts...</div>
+              </div>
+            </div>
+
+            <!-- Right: Prompt Editor & Test Runner -->
+            <div class="card studio-main">
+              <div class="card-header flex-between">
+                <div>
+                  <h3 id="current-prompt-title">Select a Prompt</h3>
+                  <span class="badge" id="current-prompt-version-badge">v1</span>
+                </div>
+                <div class="action-buttons">
+                  <button class="btn btn-sm btn-secondary" id="btn-add-version">+ New Version</button>
+                  <button class="btn btn-sm btn-primary" id="btn-run-prompt-test">▶ Test Execution</button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <label>System Prompt (Optional)</label>
+                  <textarea id="prompt-system-text" class="form-control" rows="2" placeholder="System directives..."></textarea>
+                </div>
+                <div class="form-group">
+                  <label>Template Text <span class="help-text">Use {variable_name} syntax</span></label>
+                  <textarea id="prompt-template-text" class="form-control code-editor" rows="6" placeholder="Enter template with {variables}..."></textarea>
+                </div>
+
+                <div class="variables-panel">
+                  <h4>Detected Template Variables</h4>
+                  <div class="variables-tags" id="prompt-vars-chips">
+                    <span class="tag-empty">No variables detected</span>
+                  </div>
+                  <div class="mt-2" id="prompt-vars-inputs">
+                    <!-- Dynamic variable inputs populate here -->
+                  </div>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label>Target Execution Model</label>
+                  <select id="prompt-exec-model-select" class="form-control"></select>
+                </div>
+
+                <!-- Execution Output Preview -->
+                <div class="output-preview-box mt-3" id="prompt-output-box" style="display:none;">
+                  <div class="flex-between">
+                    <h4>Execution Output</h4>
+                    <span id="prompt-output-stats" class="text-muted"></span>
+                  </div>
+                  <pre class="output-text" id="prompt-output-content"></pre>
+                </div>
+
+                <!-- Version History -->
+                <div class="version-history-box mt-4">
+                  <h4>Version History</h4>
+                  <div class="version-timeline" id="prompt-version-timeline">
+                    <!-- Version entries -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Datasets Section -->
+        <section id="section-datasets" class="view-section">
+          <div class="section-header-row">
+            <div>
+              <h2>Dataset Management</h2>
+              <p>Manage structured evaluation test sets, benchmark suites, and ground truth references.</p>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-secondary" id="btn-upload-dataset-modal">📤 Upload Dataset</button>
+              <button class="btn btn-primary" id="btn-create-dataset-modal">+ Create Dataset</button>
+            </div>
+          </div>
+
+          <div class="card mt-3">
+            <div class="card-body">
+              <div class="table-container">
+                <table class="data-table" id="table-datasets">
+                  <thead>
+                    <tr>
+                      <th>Dataset Name</th>
+                      <th>Format</th>
+                      <th>Records</th>
+                      <th>Description</th>
+                      <th>Created</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td colspan="6" class="text-center">Loading datasets...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dataset Records Preview Modal / Drawer -->
+          <div class="card mt-4" id="dataset-preview-card" style="display:none;">
+            <div class="card-header flex-between">
+              <h3 id="dataset-preview-title">Dataset Records</h3>
+              <button class="btn btn-sm btn-ghost" id="btn-close-dataset-preview">✕ Close</button>
+            </div>
+            <div class="card-body">
+              <div class="table-container">
+                <table class="data-table" id="table-dataset-records">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Question / Query</th>
+                      <th>Reference Answer</th>
+                      <th>Retrieved Contexts</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. Experiment Lab Section -->
+        <section id="section-experiments" class="view-section">
+          <div class="section-header-row">
+            <div>
+              <h2>Experiment Lab</h2>
+              <p>Run controlled prompt and multi-model benchmark experiments against evaluation datasets.</p>
+            </div>
+          </div>
+
+          <div class="card mt-3">
+            <div class="card-header">
+              <h3>Configure New Experiment</h3>
+            </div>
+            <div class="card-body">
+              <form id="form-create-experiment">
+                <div class="form-row">
+                  <div class="form-group col-6">
+                    <label>Experiment Name *</label>
+                    <input type="text" id="exp-name" class="form-control" placeholder="e.g., Llama 3 vs Mistral Groundedness Benchmark" required>
+                  </div>
+                  <div class="form-group col-6">
+                    <label>Description</label>
+                    <input type="text" id="exp-desc" class="form-control" placeholder="Objective or hypothesis for this test run...">
+                  </div>
+                </div>
+
+                <div class="form-row mt-2">
+                  <div class="form-group col-6">
+                    <label>Evaluation Dataset *</label>
+                    <select id="exp-dataset-select" class="form-control" required></select>
+                  </div>
+                  <div class="form-group col-6">
+                    <label>Prompt Template *</label>
+                    <select id="exp-prompt-select" class="form-control" required></select>
+                  </div>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label>Select Models to Compare *</label>
+                  <div class="checkbox-grid" id="exp-models-checkboxes">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+
+                <div class="form-row mt-3">
+                  <div class="form-group col-4">
+                    <label>Temperature (0.0 - 2.0)</label>
+                    <input type="number" id="exp-temp" class="form-control" min="0" max="2" step="0.1" value="0.7">
+                  </div>
+                  <div class="form-group col-4">
+                    <label>Max Output Tokens</label>
+                    <input type="number" id="exp-tokens" class="form-control" min="1" max="8192" value="1024">
+                  </div>
+                  <div class="form-group col-4">
+                    <label>Timeout (seconds)</label>
+                    <input type="number" id="exp-timeout" class="form-control" min="5" max="120" value="30">
+                  </div>
+                </div>
+
+                <div class="form-actions mt-4">
+                  <button type="submit" class="btn btn-primary" id="btn-submit-experiment">
+                    <span>🚀 Launch & Run Experiment</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. Evaluation Center Section -->
+        <section id="section-evaluation" class="view-section">
+          <div class="section-header-row">
+            <div>
+              <h2>Evaluation Center</h2>
+              <p>Test individual responses with modular evaluation metrics and RAG Triad diagnostics.</p>
+            </div>
+          </div>
+
+          <div class="tabs-nav mt-3">
+            <button class="tab-btn active" data-eval-tab="rag">RAG Triad Pipeline Evaluator</button>
+            <button class="tab-btn" data-eval-tab="adhoc">Modular Metric Scorer</button>
+          </div>
+
+          <!-- RAG Evaluator Tab -->
+          <div class="eval-tab-content active" id="tab-eval-rag">
+            <div class="card mt-3">
+              <div class="card-header">
+                <h3>RAG Triad & Hallucination Assessment</h3>
+              </div>
+              <div class="card-body">
+                <form id="form-rag-eval">
+                  <div class="form-group">
+                    <label>User Question *</label>
+                    <input type="text" id="rag-eval-question" class="form-control" placeholder="What is the time complexity of a B-Tree search?" required>
+                  </div>
+                  <div class="form-group mt-2">
+                    <label>Retrieved Context Passages * <span class="help-text">Separate multiple chunks with newlines</span></label>
+                    <textarea id="rag-eval-contexts" class="form-control" rows="3" placeholder="B-Tree indexes provide O(log N) search and insertion time..." required></textarea>
+                  </div>
+                  <div class="form-group mt-2">
+                    <label>Generated Answer to Evaluate *</label>
+                    <textarea id="rag-eval-generated" class="form-control" rows="3" placeholder="A B-Tree index provides logarithmic O(log N) search time." required></textarea>
+                  </div>
+                  <div class="form-group mt-2">
+                    <label>Reference Ground Truth Answer (Optional)</label>
+                    <input type="text" id="rag-eval-reference" class="form-control" placeholder="Reference answer for completeness verification...">
+                  </div>
+
+                  <button type="submit" class="btn btn-primary mt-3" id="btn-run-rag-eval">
+                    <span>⚡ Evaluate RAG Pipeline</span>
+                  </button>
+                </form>
+
+                <!-- RAG Results Container -->
+                <div class="rag-results-panel mt-4" id="rag-results-panel" style="display:none;">
+                  <h4>RAG Triad Diagnostic Scores</h4>
+                  <div class="kpi-grid mt-2">
+                    <div class="kpi-card">
+                      <span class="kpi-label">Context Relevance</span>
+                      <span class="kpi-value text-indigo" id="rag-score-ctx-rel">-</span>
+                    </div>
+                    <div class="kpi-card">
+                      <span class="kpi-label">Faithfulness (Grounded)</span>
+                      <span class="kpi-value text-emerald" id="rag-score-faith">-</span>
+                    </div>
+                    <div class="kpi-card">
+                      <span class="kpi-label">Answer Relevance</span>
+                      <span class="kpi-value text-blue" id="rag-score-ans-rel">-</span>
+                    </div>
+                    <div class="kpi-card">
+                      <span class="kpi-label">Overall RAG Score</span>
+                      <span class="kpi-value text-purple" id="rag-score-overall">-</span>
+                    </div>
+                    <div class="kpi-card">
+                      <span class="kpi-label">Hallucination Risk</span>
+                      <span class="kpi-value" id="rag-score-hallucination">-</span>
+                    </div>
+                  </div>
+
+                  <div class="callout-box mt-3" id="rag-verdict-box">
+                    <p id="rag-verdict-text"></p>
+                  </div>
+
+                  <div class="metrics-breakdown-list mt-3" id="rag-metrics-breakdown">
+                    <!-- Metric rows -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ad-hoc Modular Evaluator Tab -->
+          <div class="eval-tab-content" id="tab-eval-adhoc">
+            <div class="card mt-3">
+              <div class="card-header">
+                <h3>Ad-hoc Metric Scorer</h3>
+              </div>
+              <div class="card-body">
+                <form id="form-adhoc-eval">
+                  <div class="form-group">
+                    <label>Question</label>
+                    <input type="text" id="adhoc-question" class="form-control" placeholder="Question or prompt topic...">
+                  </div>
+                  <div class="form-group mt-2">
+                    <label>Generated Answer *</label>
+                    <textarea id="adhoc-generated" class="form-control" rows="3" required></textarea>
+                  </div>
+                  <div class="form-group mt-2">
+                    <label>Reference Answer (Ground Truth)</label>
+                    <textarea id="adhoc-reference" class="form-control" rows="2"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary mt-3">Score Response</button>
+                </form>
+
+                <div class="mt-4" id="adhoc-results-container" style="display:none;">
+                  <h4>Evaluation Verdict</h4>
+                  <div class="metrics-breakdown-list mt-2" id="adhoc-metrics-list"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. Model Comparison Section -->
+        <section id="section-comparison" class="view-section">
+          <div class="section-header-row">
+            <div>
+              <h2>Model Comparison</h2>
+              <p>Multi-dimensional benchmarking: Quality scores, latency distributions, token usage, and cost.</p>
+            </div>
+            <div class="form-inline">
+              <label>Select Experiment: </label>
+              <select id="compare-experiment-select" class="form-control ml-2"></select>
+            </div>
+          </div>
+
+          <div class="comparison-grid mt-3" id="comparison-cards-grid">
+            <div class="empty-state">Select an experiment to compare models.</div>
+          </div>
+
+          <div class="charts-row mt-4">
+            <div class="card col-6">
+              <div class="card-header">
+                <h3>Quality Metric Comparison</h3>
+              </div>
+              <div class="card-body">
+                <canvas id="chart-comparison-quality" height="260"></canvas>
+              </div>
+            </div>
+            <div class="card col-6">
+              <div class="card-header">
+                <h3>Latency & Token Benchmarks</h3>
+              </div>
+              <div class="card-body">
+                <canvas id="chart-comparison-latency" height="260"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Side-by-Side Outputs Table -->
+          <div class="card mt-4">
+            <div class="card-header">
+              <h3>Side-by-Side Response Outputs</h3>
+            </div>
+            <div class="card-body">
+              <div class="table-container">
+                <table class="data-table" id="table-comparison-samples">
+                  <thead>
+                    <tr>
+                      <th>Question</th>
+                      <th>Reference Answer</th>
+                      <th>Model Outputs & Latency</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td colspan="3" class="text-center">Select an experiment to view sample generations.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. Observability & Traces Section -->
+        <section id="section-observability" class="view-section">
+          <div class="section-header-row">
+            <div>
+              <h2>Observability & Traces</h2>
+              <p>Inspect raw request-response traces, latency distributions, token counts, and structured audit logs.</p>
+            </div>
+            <div class="filters-bar">
+              <select id="filter-trace-status" class="form-control form-control-sm">
+                <option value="">All Statuses</option>
+                <option value="SUCCESS">SUCCESS</option>
+                <option value="FAILED">FAILED</option>
+                <option value="TIMEOUT">TIMEOUT</option>
+                <option value="EMPTY_RESPONSE">EMPTY_RESPONSE</option>
+              </select>
+              <button class="btn btn-sm btn-secondary" id="btn-refresh-traces">Refresh Traces</button>
+            </div>
+          </div>
+
+          <div class="card mt-3">
+            <div class="card-body">
+              <div class="table-container">
+                <table class="data-table" id="table-traces">
+                  <thead>
+                    <tr>
+                      <th>Timestamp</th>
+                      <th>Request ID</th>
+                      <th>Model</th>
+                      <th>Status</th>
+                      <th>Error Category</th>
+                      <th>Latency</th>
+                      <th>Tokens</th>
+                      <th>Cost</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td colspan="9" class="text-center">Loading traces...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 9. Analytics Section -->
+        <section id="section-analytics" class="view-section">
+          <div class="section-header-row">
+            <div>
+              <h2>Analytics & Quality Trends</h2>
+              <p>Statistical distributions, quality trends over time, token consumption, and failure diagnostics.</p>
+            </div>
+          </div>
+
+          <div class="charts-row mt-3">
+            <div class="card col-6">
+              <div class="card-header">
+                <h3>Evaluation Score Distribution</h3>
+              </div>
+              <div class="card-body">
+                <canvas id="chart-score-dist" height="240"></canvas>
+              </div>
+            </div>
+            <div class="card col-6">
+              <div class="card-header">
+                <h3>Token Consumption by Model</h3>
+              </div>
+              <div class="card-body">
+                <canvas id="chart-token-usage" height="240"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="charts-row mt-4">
+            <div class="card col-6">
+              <div class="card-header">
+                <h3>Execution Latency Timeline</h3>
+              </div>
+              <div class="card-body">
+                <canvas id="chart-latency-trend" height="240"></canvas>
+              </div>
+            </div>
+            <div class="card col-6">
+              <div class="card-header">
+                <h3>Failure Categorization Breakdown</h3>
+              </div>
+              <div class="card-body">
+                <canvas id="chart-failure-breakdown" height="240"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 10. Experiment History Section -->
+        <section id="section-history" class="view-section">
+          <div class="section-header-row">
+            <div>
+              <h2>Experiment History</h2>
+              <p>Browse historical benchmark runs, inspect results, and compare iterations over time.</p>
+            </div>
+          </div>
+
+          <div class="card mt-3">
+            <div class="card-body">
+              <div class="table-container">
+                <table class="data-table" id="table-history">
+                  <thead>
+                    <tr>
+                      <th>Experiment Name</th>
+                      <th>Created</th>
+                      <th>Status</th>
+                      <th>Total Runs</th>
+                      <th>Completed</th>
+                      <th>Failed</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td colspan="7" class="text-center">Loading experiment history...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Trace Inspector Modal -->
+  <div class="modal-overlay" id="modal-trace" style="display:none;">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h3 id="modal-trace-title">Execution Trace Inspector</h3>
+        <button class="modal-close" id="btn-close-trace-modal">✕</button>
+      </div>
+      <div class="modal-body" id="modal-trace-body">
+        <!-- Trace details -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Register Model Modal -->
+  <div class="modal-overlay" id="modal-register-model" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Register New Model Configuration</h3>
+        <button class="modal-close" id="btn-close-register-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-register-model">
+          <div class="form-group">
+            <label>Provider *</label>
+            <select id="reg-provider-select" class="form-control" required>
+              <option value="Mock">Mock Provider</option>
+              <option value="Ollama">Ollama Local</option>
+            </select>
+          </div>
+          <div class="form-group mt-2">
+            <label>Model Identifier *</label>
+            <input type="text" id="reg-model-id" class="form-control" placeholder="e.g. mistral:latest or mock-custom" required>
+          </div>
+          <div class="form-group mt-2">
+            <label>Display Name *</label>
+            <input type="text" id="reg-display-name" class="form-control" placeholder="e.g. Mistral 7B Instruct" required>
+          </div>
+          <div class="form-group mt-2">
+            <label>Description</label>
+            <input type="text" id="reg-desc" class="form-control" placeholder="Model description or notes...">
+          </div>
+          <div class="form-row mt-2">
+            <div class="form-group col-6">
+              <label>Default Temperature</label>
+              <input type="number" id="reg-temp" class="form-control" value="0.7" step="0.1" min="0" max="2">
+            </div>
+            <div class="form-group col-6">
+              <label>Max Output Tokens</label>
+              <input type="number" id="reg-max-tokens" class="form-control" value="1024" min="1" max="8192">
+            </div>
+          </div>
+          <div class="form-row mt-2">
+            <div class="form-group col-6">
+              <label>Cost / 1k Input Tokens ($) <span class="help-text">Leave empty if open-source</span></label>
+              <input type="number" id="reg-cost-in" class="form-control" placeholder="e.g. 0.005" step="0.0001">
+            </div>
+            <div class="form-group col-6">
+              <label>Cost / 1k Output Tokens ($)</label>
+              <input type="number" id="reg-cost-out" class="form-control" placeholder="e.g. 0.015" step="0.0001">
+            </div>
+          </div>
+          <div class="modal-footer mt-4">
+            <button type="submit" class="btn btn-primary">Save Model</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Prompt Modal -->
+  <div class="modal-overlay" id="modal-create-prompt" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Create Prompt Template</h3>
+        <button class="modal-close" id="btn-close-prompt-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-create-prompt">
+          <div class="form-group">
+            <label>Prompt Name *</label>
+            <input type="text" id="cp-name" class="form-control" placeholder="e.g. RAG Technical Q&A" required>
+          </div>
+          <div class="form-group mt-2">
+            <label>Description</label>
+            <input type="text" id="cp-desc" class="form-control" placeholder="Intended use case...">
+          </div>
+          <div class="form-group mt-2">
+            <label>Tags</label>
+            <input type="text" id="cp-tags" class="form-control" placeholder="rag,qa,technical">
+          </div>
+          <div class="form-group mt-2">
+            <label>System Prompt (Optional)</label>
+            <textarea id="cp-system" class="form-control" rows="2"></textarea>
+          </div>
+          <div class="form-group mt-2">
+            <label>Template Text * <span class="help-text">Use {variable_name}</span></label>
+            <textarea id="cp-template" class="form-control code-editor" rows="5" placeholder="Context:\n{context}\n\nQuestion: {question}\n\nAnswer:" required></textarea>
+          </div>
+          <div class="modal-footer mt-4">
+            <button type="submit" class="btn btn-primary">Create Prompt</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Dataset Modal -->
+  <div class="modal-overlay" id="modal-upload-dataset" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Upload Dataset (JSON or CSV)</h3>
+        <button class="modal-close" id="btn-close-upload-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-upload-dataset">
+          <div class="form-group">
+            <label>Dataset Name *</label>
+            <input type="text" id="upload-ds-name" class="form-control" required placeholder="e.g. Distributed Consensus Benchmark">
+          </div>
+          <div class="form-group mt-2">
+            <label>Description</label>
+            <input type="text" id="upload-ds-desc" class="form-control" placeholder="Evaluation criteria or test suite notes...">
+          </div>
+          <div class="form-group mt-2">
+            <label>File (JSON or CSV) *</label>
+            <input type="file" id="upload-ds-file" class="form-control" accept=".json,.csv" required>
+          </div>
+          <div class="modal-footer mt-4">
+            <button type="submit" class="btn btn-primary">Upload & Ingest</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
+

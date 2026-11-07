@@ -1,0 +1,55 @@
+[
+  {
+    "question": "What is the primary role of a B-Tree index in relational databases?",
+    "reference_answer": "A B-Tree index maintains balanced sorted data to provide logarithmic O(log N) time complexity for search, insertion, and range queries.",
+    "contexts": [
+      "B-Tree indexes are self-balancing search trees widely used in database management systems like PostgreSQL and MySQL.",
+      "They keep data sorted and allow searches, sequential access, insertions, and deletions in logarithmic time O(log N).",
+      "Because leaf nodes are connected via pointers, B-Trees excel at both single-key lookups and range scans."
+    ],
+    "metadata": {
+      "domain": "Database Systems",
+      "difficulty": "medium"
+    }
+  },
+  {
+    "question": "How does Raft maintain consensus across a distributed cluster?",
+    "reference_answer": "Raft achieves consensus by electing a distinguished leader, replicating state machine log entries from the leader to followers, and ensuring commit safety through majority quorum.",
+    "contexts": [
+      "The Raft consensus algorithm decomposes cluster state synchronization into leader election, log replication, and safety.",
+      "A leader is elected by obtaining votes from a majority of nodes across randomized election timeouts.",
+      "Once elected, the leader accepts client commands, appends them to its log, and replicates them to follower nodes before committing."
+    ],
+    "metadata": {
+      "domain": "Distributed Systems",
+      "difficulty": "hard"
+    }
+  },
+  {
+    "question": "What is the computational complexity of the standard Scaled Dot-Product Attention mechanism?",
+    "reference_answer": "Standard Scaled Dot-Product Attention has a quadratic time and memory complexity of O(N^2 * d) with respect to sequence length N.",
+    "contexts": [
+      "The Transformer architecture utilizes Scaled Dot-Product Attention defined as Attention(Q, K, V) = softmax(Q K^T / sqrt(d_k)) V.",
+      "Computing the product of the Query matrix Q (N x d) and Key matrix K (N x d) requires an N x N matrix calculation.",
+      "Consequently, standard attention scales quadratically O(N^2) with respect to input sequence length N."
+    ],
+    "metadata": {
+      "domain": "Machine Learning",
+      "difficulty": "hard"
+    }
+  },
+  {
+    "question": "Why should blocking CPU-bound tasks be avoided in the Python asyncio event loop?",
+    "reference_answer": "Blocking CPU-bound operations occupy the single-threaded event loop, preventing all other pending coroutines and I/O tasks from making progress.",
+    "contexts": [
+      "Python's asyncio runs a cooperative single-threaded event loop on the main thread.",
+      "If a coroutine executes a synchronous blocking call or heavy CPU computation, the entire loop freezes.",
+      "CPU-bound tasks should instead be delegated to a concurrent.futures ProcessPoolExecutor using loop.run_in_executor()."
+    ],
+    "metadata": {
+      "domain": "Python Concurrency",
+      "difficulty": "medium"
+    }
+  }
+]
+

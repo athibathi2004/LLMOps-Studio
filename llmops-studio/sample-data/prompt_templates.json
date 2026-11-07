@@ -1,0 +1,24 @@
+[
+  {
+    "name": "RAG Factoid Question Answering",
+    "description": "Standard prompt template for RAG applications with strict context grounding.",
+    "tags": "rag,qa,grounded",
+    "system_prompt": "You are a precise technical assistant. Answer the user question strictly using only the supplied context. If the answer cannot be determined from the context, state 'Information not found in context.'",
+    "template": "Context:\n{context}\n\nQuestion: {question}\n\nProvide a factual, concise response strictly grounded in the context provided above:"
+  },
+  {
+    "name": "Technical Summarization",
+    "description": "Distills dense technical passages into structured bullet points.",
+    "tags": "summarization,technical",
+    "system_prompt": "You are an expert technical editor. Summarize the provided document into clear, objective key points.",
+    "template": "Review the following passage carefully:\n\n{context}\n\nGenerate a summary containing:\n1. Core concept\n2. Key trade-offs or constraints\n3. Actionable takeaway"
+  },
+  {
+    "name": "Structured JSON Entity Extractor",
+    "description": "Extracts entities and attributes into valid JSON format.",
+    "tags": "json,extraction,structured",
+    "system_prompt": "You are a strict data extraction parser. Output exclusively valid JSON matching the schema.",
+    "template": "Analyze the following input text:\n{input_text}\n\nExtract all entities into JSON with keys: entities (list), confidence (float between 0.0 and 1.0), and topic (string)."
+  }
+]
+
